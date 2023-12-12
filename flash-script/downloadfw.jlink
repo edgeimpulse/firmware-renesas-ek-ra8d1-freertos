@@ -1,0 +1,9 @@
+sleep 10
+
+loadfile ../Debug/firmware-renesas-ek-ra8d1-freertos.hex
+
+sleep 10
+r
+go
+
+q
