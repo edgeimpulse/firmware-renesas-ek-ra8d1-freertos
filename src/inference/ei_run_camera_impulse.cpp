@@ -137,7 +137,7 @@ void ei_run_impulse(void)
     // print and discard JPEG buffer before inference to free some memory
     if (debug_mode) {
         ei_printf("Begin output\n");
-        
+
         size_t jpeg_buffer_size = EI_CLASSIFIER_INPUT_WIDTH * EI_CLASSIFIER_INPUT_HEIGHT >= 128 * 128 ?
             8192 * 3 :
             4096 * 4;
@@ -155,7 +155,7 @@ void ei_run_impulse(void)
             return;
         }
 
-        ei_printf("Framebuffer: ");        
+        ei_printf("Framebuffer: ");
         ei_camera_read_encode_send_sample_buffer((char*)jpeg_buffer, out_size);
         ei_printf("\r\n");
 
@@ -184,36 +184,7 @@ void ei_run_impulse(void)
         ei_free(snapshot_buf);
 #endif
 
-    // print the predictions
-    ei_printf("Predictions (DSP: %ld us., Classification: %ld us., Anomaly: %ld us.): \n",
-                (int32_t)result.timing.dsp_us, (int32_t)result.timing.classification_us, (int32_t)result.timing.anomaly_us);
-
-    /*ei_printf("Predictions (DSP: %d ms., Classification: %d ms., Anomaly: %d ms.): \n",
-                result.timing.dsp, result.timing.classification, result.timing.anomaly);*/
-#if EI_CLASSIFIER_OBJECT_DETECTION == 1
-    bool bb_found = result.bounding_boxes[0].value > 0;
-    for (size_t ix = 0; ix < result.bounding_boxes_count; ix++) {
-        auto bb = result.bounding_boxes[ix];
-        if (bb.value == 0) {
-            continue;
-        }
-        ei_printf("    %s (", bb.label);
-        ei_printf_float(bb.value);
-        ei_printf(") [ x: %lu, y: %lu, width: %lu, height: %lu ]\n", bb.x, bb.y, bb.width, bb.height);
-    }
-    if (!bb_found) {
-        ei_printf("    No objects found\n");
-    }
-#else
-    for (size_t ix = 0; ix < EI_CLASSIFIER_LABEL_COUNT; ix++) {
-        ei_printf("    %s: %.5f\n", result.classification[ix].label,
-                                    result.classification[ix].value);
-    }
-
-#if EI_CLASSIFIER_HAS_ANOMALY == 1
-        ei_printf("    anomaly score: %.3f\n", result.anomaly);
-#endif
-#endif
+    display_results(&result);
 
     if (debug_mode) {
         ei_printf("End output\n");
@@ -274,15 +245,15 @@ void ei_run_stream_impulse(uint8_t* pbuffer, uint16_t width, uint16_t height, ei
     if (ei_error != EI_IMPULSE_OK) {
         ei_printf("ERR: Failed to run impulse (%d)\n", ei_error);
     }
-    
+
 }
 
 /**
- * @brief 
- * 
- * @param continuous 
- * @param debug 
- * @param use_max_uart_speed 
+ * @brief
+ *
+ * @param continuous
+ * @param debug
+ * @param use_max_uart_speed
  */
 void ei_start_impulse(bool continuous, bool debug, bool use_max_uart_speed)
 {
@@ -347,8 +318,8 @@ void ei_start_impulse(bool continuous, bool debug, bool use_max_uart_speed)
 }
 
 /**
- * @brief 
- * 
+ * @brief
+ *
  */
 void ei_stop_impulse(void)
 {
@@ -365,10 +336,10 @@ void ei_stop_impulse(void)
 }
 
 /**
- * @brief 
- * 
- * @return true 
- * @return false 
+ * @brief
+ *
+ * @return true
+ * @return false
  */
 bool is_inference_running(void)
 {
