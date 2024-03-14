@@ -72,6 +72,7 @@ class ArduCAM {
         void init_config(void);
         void set_format(t_image_format format);
         void set_size(uint8_t size);
+        void flip(bool flip_image);
     
     protected:
         t_arducam_state state;
@@ -105,6 +106,7 @@ class ArduCAM {
         void ov2640_set_size(uint8_t size);
         bool ov2640_set_manual_size(uint16_t width, uint16_t height, uint8_t index);
         bool ov2640_set_manual_size(uint16_t width, uint16_t height);
+        void ov2640_flip(bool flip_image);
 
         void ov2640_wakeup(void);
         void ov2640_sleep(void);
@@ -117,6 +119,7 @@ class ArduCAM {
         void ov3640_wakeup(void);
         void ov3640_sleep(void);
         void ov3640_center_image(uint16_t width, uint16_t height);
+        void ov3640_flip(bool flip_image);
 };
 
 #endif

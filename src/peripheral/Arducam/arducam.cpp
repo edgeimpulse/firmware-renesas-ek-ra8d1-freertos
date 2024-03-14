@@ -143,6 +143,23 @@ void ArduCAM::set_size(uint8_t size)
 
 /**
  *
+ * @param flip_image
+ */
+void ArduCAM::flip(bool flip_image)
+{
+    if (e_camera_ov2640 == my_type) {
+        this->ov2640_flip(flip_image);
+    }
+    else if (e_camera_ov3640 == my_type){
+        this->ov3640_flip(flip_image);
+    }
+    else {
+        // ...
+    }
+}
+
+/**
+ *
  * @param buf
  * @return
  */
@@ -574,6 +591,22 @@ void ArduCAM::ov2640_wakeup(void)
 
 /**
  *
+ * @param flip_image
+ */
+void ArduCAM::ov2640_flip(bool flip_image)
+{
+    if (flip_image == true) {
+        wrSensorReg8_8(0xFF, 0x01);
+        //wrSensorReg8_8(OV2640_SENSOR_REG04, 0x68);
+    }
+    else {
+        wrSensorReg8_8(0xFF, 0x01);
+        //wrSensorReg8_8(OV2640_SENSOR_REG04, 0x28);
+    }
+}
+
+/**
+ *
  * @return
  */
 bool ArduCAM::ov3640_detect_camera(void)
@@ -800,6 +833,24 @@ void ArduCAM::ov3640_wakeup(void)
     rdSensorReg16_8(0x3086, &actual_val);
     actual_val &= ~0x03;
     wrSensorReg16_8(0x3086, actual_val);
+}
+
+/**
+ *
+ * @param flip_image
+ */
+void ArduCAM::ov3640_flip(bool flip_image)
+{
+    if (flip_image == true) {
+        wrSensorReg16_8(OV3640_TMC6, 0x11); // flip
+        //wrSensorReg16_8(OV3640_VS_L, 0x09); // ??
+        wrSensorReg16_8(0x3090, 0xC0);
+    }
+    else {
+        wrSensorReg16_8(OV3640_TMC6, 0x10); // no mirror/flip
+        wrSensorReg16_8(0x3090, 0xC0);
+        //wrSensorReg16_8(OV3640_VS_L, 0x0A);
+    }
 }
 
 #define TOT_SIZE_H

@@ -352,7 +352,48 @@ void graphic_set_timing(int32_t fsp, int32_t dsp_us, int32_t classification_us)
 }
 
 /**
- *
+ * @brief 
+ * 
+ * @param label 
+ * @param x0 
+ * @param y0 
+ * @param width 
+ * @param height 
+ * @param idx 
+ * @param ratio 
+ */
+void graphic_set_centroid(const char* label, uint16_t x0, uint16_t y0, uint16_t width, uint16_t height, uint16_t idx, float ratio)
+{
+    char temp_str[256] = {0};
+    uint16_t new_x0 = (x0 * ratio);
+    uint16_t new_y0 = (y0 * ratio);
+    uint16_t new_width = (width * ratio);
+    uint16_t new_height = (height * ratio);
+
+    d2_setcolor(d2_handle, 0, GREEN_COLOR_VAL);
+
+    d2_point x_center = (((new_x0 << 1) + new_width) >> 1);
+    d2_point y_center = (((new_y0 << 1)+ new_height) >> 1);
+
+    d2_rendercircle(d2_handle, (x_center << 4), (y_center << 4), (d2_width)(10 << 4), (d2_width)(2 << 4));
+    d2_setcolor(d2_handle, 0, YELLOW_COLOR_VAL);
+    snprintf(temp_str, 256, "    %s", label);
+    text_print(d2_handle, temp_str, (uint8_t)strlen(temp_str), 10, CAM_LAYER_SIZE_Y + DETECTION_LABEL_Y_OFFSET + (idx * STRING_SPACING), YELLOW_COLOR_VAL);
+
+    snprintf(temp_str, 256, "    [ x: %d, y: %d, width: %d, height: %d ]", x0, y0, width, height);
+    text_print(d2_handle, temp_str, (uint8_t)strlen(temp_str), 10, CAM_LAYER_SIZE_Y + DETECTION_COORD_Y_OFFSET + (idx * STRING_SPACING), YELLOW_COLOR_VAL);
+}
+
+/**
+ * @brief 
+ * 
+ * @param label 
+ * @param x0 
+ * @param y0 
+ * @param width 
+ * @param height 
+ * @param idx 
+ * @param ratio 
  */
 void graphic_set_box(const char* label, uint16_t x0, uint16_t y0, uint16_t width, uint16_t height, uint16_t idx, float ratio)
 {
@@ -364,17 +405,10 @@ void graphic_set_box(const char* label, uint16_t x0, uint16_t y0, uint16_t width
 
     d2_setcolor(d2_handle, 0, GREEN_COLOR_VAL);
 
-#if DRAW_BOX == 1
     d2_renderline(d2_handle, (d2_point) ((new_x0) << 4), (d2_point) (new_y0 << 4), (d2_point) ((new_x0 + new_width) << 4), (d2_point) ((new_y0 ) << 4), (d2_point) (2 << 4), 0);
     d2_renderline(d2_handle, (d2_point) ((new_x0 + new_width) << 4), (d2_point) (new_y0 << 4), (d2_point) ((new_x0 + new_width) << 4), (d2_point) ((new_y0 + new_height) << 4), (d2_point) (2 << 4), 0);
     d2_renderline(d2_handle, (d2_point) ((new_x0 + new_width) << 4), (d2_point) ((new_y0 + new_height) << 4), (d2_point) (new_x0 << 4), (d2_point) ((new_y0 + new_height) << 4), (d2_point) (2 << 4), 0);
     d2_renderline(d2_handle, (d2_point) ((new_x0) << 4), (d2_point) ((new_y0 + new_height) << 4), (d2_point) (new_x0 << 4), (d2_point) (new_y0 << 4), (d2_point) (2 << 4), 0);
-#else
-    d2_point x_center = (((new_x0 << 1) + new_width) >> 1);
-    d2_point y_center = (((new_y0 << 1)+ new_height) >> 1);
-
-    d2_rendercircle(d2_handle, (x_center << 4), (y_center << 4), (d2_width)(10 << 4), (d2_width)(2 << 4));
-#endif
 
     d2_setcolor(d2_handle, 0, YELLOW_COLOR_VAL);
     snprintf(temp_str, 256, "    %s", label);
@@ -392,6 +426,61 @@ void graphic_no_detection(void)
     const char temp_str[] = "No object detected";
 
     text_print(d2_handle, temp_str, (uint8_t)strlen(temp_str), 10, CAM_LAYER_SIZE_Y + DETECTION_Y_OFFSET, YELLOW_COLOR_VAL);
+}
+
+/**
+ *
+ */
+void graphic_classification(const char* label, float value, uint16_t idx)
+{
+    char temp_str[256] = {0};
+    char float_string[5] = {0};
+
+    float n = value;
+
+    static double PRECISION = 0.00001;
+    static int MAX_NUMBER_STRING_SIZE = 32;
+
+    char s[MAX_NUMBER_STRING_SIZE];
+
+    if (n == 0.0) {
+        strcpy(s, "0");
+    }
+    else {
+        int digit, m;
+        char *c = s;
+        int neg = (n < 0);
+        if (neg) {
+            n = -n;
+        }
+        // calculate magnitude
+        m = log10(n);
+        if (neg) {
+            *(c++) = '-';
+        }
+        if (m < 1.0) {
+            m = 0;
+        }
+        // convert the number
+        while (n > PRECISION || m >= 0) {
+            double weight = pow(10.0, m);
+            if (weight > 0 && !isinf(weight)) {
+                digit = floor(n / weight);
+                n -= (digit * weight);
+                *(c++) = '0' + digit;
+            }
+            if (m == 0 && n > 0) {
+                *(c++) = '.';
+            }
+            m--;
+        }
+        *(c) = '\0';
+    }
+
+    d2_setcolor(d2_handle, 0, YELLOW_COLOR_VAL);
+
+    snprintf(temp_str, 256, "    %s: %s", label, s);
+    text_print(d2_handle, temp_str, (uint8_t)strlen(temp_str), 10, CAM_LAYER_SIZE_Y + DETECTION_Y_OFFSET + (idx * STRING_SPACING), YELLOW_COLOR_VAL);
 }
 
 /**

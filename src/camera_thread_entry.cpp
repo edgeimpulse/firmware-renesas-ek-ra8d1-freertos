@@ -27,6 +27,8 @@
 #include "inference/ei_run_impulse.h"
 #include "graphic/graphic.h"
 #include "peripheral/led.h"
+#include "model-parameters/model_metadata.h"
+#include "edge-impulse-sdk/classifier/ei_model_types.h"
 
 #define CAMERA_STACK_SIZE_BYTE              (8192)
 #define CAMERA_TASK_PRIORITY                (2u)
@@ -36,8 +38,11 @@
 static TaskHandle_t camera_thread_handle;
 
 static void camera_thread_entry(void *pvParameters);
-static void set_lcd_centroids(ei_impulse_result_bounding_box_t* pbox, uint16_t index);
 static void prepare_fb(uint8_t* pbuff, int& cropWidth, int& cropHeight);
+
+#if (EI_CLASSIFIER_OBJECT_DETECTION == 1)
+static void set_lcd_detection(ei_impulse_result_bounding_box_t* pbox, uint16_t index);
+#endif
 
 /**
  *
@@ -120,20 +125,28 @@ static void camera_thread_entry(void *pvParameters)
             old_time = new_time;
             graphic_set_timing(fsp, (int32_t)result.timing.dsp_us, (int32_t)result.timing.classification_us);
 
-            if (result.bounding_boxes[0].value > 0) {
-                graphic_start_detection();
-                for (size_t ix = 0; ix < result.bounding_boxes_count; ix++) {
-                    auto bb = result.bounding_boxes[ix];
-                    if (bb.value == 0) {
-                        continue;
+#if EI_CLASSIFIER_OBJECT_DETECTION == 1
+            if (result.bounding_boxes){
+                if (result.bounding_boxes[0].value > 0) {
+                    graphic_start_detection();
+                    for (size_t ix = 0; ix < result.bounding_boxes_count; ix++) {
+                        auto bb = result.bounding_boxes[ix];
+                        if (bb.value == 0) {
+                            continue;
+                        }
+                        // set detection
+                        set_lcd_detection((ei_impulse_result_bounding_box_t*)&bb, (uint16_t)ix);
                     }
-                    // set box
-                    set_lcd_centroids((ei_impulse_result_bounding_box_t*)&bb, (uint16_t)ix);
+                }
+                else {
+                    graphic_no_detection();
                 }
             }
-            else {
-                graphic_no_detection();
+#else
+            for (size_t ix = 0; ix < EI_CLASSIFIER_LABEL_COUNT; ix++) {
+                graphic_classification(result.classification[ix].label, result.classification[ix].value, (uint16_t)ix);
             }
+#endif
 
             xSemaphoreGive(g_new_fb_semaphore); // counting semaphore
             camera_event = xEventGroupWaitBits(
@@ -204,14 +217,20 @@ static void prepare_fb(uint8_t* pbuff, int& cropWidth, int& cropHeight)
             8);
 }
 
+#if EI_CLASSIFIER_OBJECT_DETECTION == 1
 /**
  *
  * @param pbox
  * @param index
  */
-static void set_lcd_centroids(ei_impulse_result_bounding_box_t* pbox, uint16_t index)
+static void set_lcd_detection(ei_impulse_result_bounding_box_t* pbox, uint16_t index)
 {
     float ratio = (float)CAM_LAYER_SIZE_Y / (float)EI_CLASSIFIER_INPUT_HEIGHT;
-    //
+#if (EI_CLASSIFIER_OBJECT_DETECTION_LAST_LAYER == EI_CLASSIFIER_LAST_LAYER_FOMO)
+    graphic_set_centroid(pbox->label, pbox->x, pbox->y, pbox->width, pbox->height, (uint16_t)index, ratio);
+#else
     graphic_set_box(pbox->label, pbox->x, pbox->y, pbox->width, pbox->height, (uint16_t)index, ratio);
+#endif
 }
+
+#endif

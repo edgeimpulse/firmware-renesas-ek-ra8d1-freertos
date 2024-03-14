@@ -75,7 +75,7 @@ FSP Configuration
     Clocks: HOCO FLL Function: Disabled
     Clocks: Clock Settling Delay: Enabled
     Clocks: Sleep Mode Entry and Exit Delays: Enabled
-    Clocks: RTOS Sleep Mode Entry and Exit Delays: Enabled
+    Clocks: RTOS Sleep on Idle: Disabled
     Clocks: MSTP Change Delays: Enabled
     Clocks: Settling Delay (us): 150
     Main Oscillator Wait Time: 8163 cycles
@@ -289,7 +289,7 @@ FSP Configuration
       P904 D9 - LCD_DATA6 - - Disabled - - "GLCD: LCD_DATA6; GPT11: GTIOC11B" - None - - 
       P905 A6 SDRAM_A14 SDRAM_A14 H None "Peripheral mode" - - "BUS: A14; GLCD: LCD_DATA19; IRQ8: IRQ8; SCI3: CTS3; SDRAM: A14" - O - - 
       P906 C7 SDRAM_A15 SDRAM_A15 H None "Peripheral mode" - - "BUS: A15; GLCD: LCD_DATA20; GPT13: GTIOC13B; IRQ9: IRQ9; SDRAM: A15; USB FS: USB_ID" - O - - 
-      P907 B7 - ARDUINO_D2 - - Disabled - - "BUS: A16; GLCD: LCD_DATA21; GPT13: GTIOC13A; IRQ10: IRQ10; SDRAM: A16; USB FS: USB_EXICEN" - None - - 
+      P907 B7 SDRAM_A16 ARDUINO_D2 H None "Peripheral mode" - - "BUS: A16; GLCD: LCD_DATA21; GPT13: GTIOC13A; IRQ10: IRQ10; SDRAM: A16; USB FS: USB_EXICEN" - O - - 
       P908 C8 SDRAM_RAS SDRAM_RAS H None "Peripheral mode" - - "BUS: CS2#; GLCD: LCD_DATA22; GPT12: GTIOC12B; IRQ11: IRQ11; SDRAM: RAS; USB HS: USBHS_ID" - O - - 
       P909 A7 SDRAM_CAS SDRAM_CAS H - "Peripheral mode" - - "BUS: CS3#; GLCD: LCD_DATA23; GPT12: GTIOC12A; SDRAM: CAS; USB HS: USBHS_EXICEN" - O - - 
       P910 E7 - LCD_DATA2 - - Disabled - - "GLCD: LCD_DATA2" - None - - 
@@ -514,7 +514,7 @@ FSP Configuration
       P904 D9 - LCD_DATA6 - - Disabled - - "GLCD: LCD_DATA6; GPT11: GTIOC11B" - None - - 
       P905 A6 - SDRAM_A14 L None Disabled - - "BUS: A14; GLCD: LCD_DATA19; IRQ8: IRQ8; SCI3: CTS3; SDRAM: A14" - O - - 
       P906 C7 - SDRAM_A15 L None Disabled - - "BUS: A15; GLCD: LCD_DATA20; GPT13: GTIOC13B; IRQ9: IRQ9; SDRAM: A15; USB FS: USB_ID" - O - - 
-      P907 B7 - ARDUINO_D2 - - Disabled - - "BUS: A16; GLCD: LCD_DATA21; GPT13: GTIOC13A; IRQ10: IRQ10; SDRAM: A16; USB FS: USB_EXICEN" - None - - 
+      P907 B7 - ARDUINO_D2 L None Disabled - - "BUS: A16; GLCD: LCD_DATA21; GPT13: GTIOC13A; IRQ10: IRQ10; SDRAM: A16; USB FS: USB_EXICEN" - O - - 
       P908 C8 - SDRAM_RAS L None Disabled - - "BUS: CS2#; GLCD: LCD_DATA22; GPT12: GTIOC12B; IRQ11: IRQ11; SDRAM: RAS; USB HS: USBHS_ID" - O - - 
       P909 A7 - SDRAM_CAS L - Disabled - - "BUS: CS3#; GLCD: LCD_DATA23; GPT12: GTIOC12A; SDRAM: CAS; USB HS: USBHS_EXICEN" - O - - 
       P910 E7 - LCD_DATA2 - - Disabled - - "GLCD: LCD_DATA2" - None - - 

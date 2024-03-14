@@ -60,14 +60,14 @@ RUN mkdir -p /app/scripts && \
 # Remove any packs that may have been installed through platform installer. We will install based on ENV_FSP_RELEASE.
 # Generate .eclipse/com.renesas.platform_<random> directory so we can install FSP to it.
 # The || true is on the end because this call will currently fail
-ENV ENV_FSP_PACK_VERSION=v4.2.0_v5.0.0
+ENV ENV_FSP_PACK_VERSION=v5.1.0
 
 RUN rm -rf /opt/e2studio/internal && \
     rm -rf /root/.eclipse && \
     /usr/bin/e2studio --launcher.suppressErrors -nosplash -application org.eclipse.ease.runScript -data ${ENV_E2STUDIO_DEFAULT_WS} -script /app/scripts/minimum_ease.py -clean || true && \
     TMP_E2STUDIO_SUPPORT_AREA=$(find /root/.eclipse -mindepth 1 -maxdepth 1 -regextype sed -regex ".*/com\.renesas\.platform_[0-9]*" -type d) && \
-    mkdir -p /tmp/fsp && \    
-    wget --progress=bar:force:noscroll https://cdn.edgeimpulse.com/build-system/FSP_Packs_${ENV_FSP_PACK_VERSION}.zip -O /tmp/fsp/FSP_Packs_${ENV_FSP_PACK_VERSION}.zip && \
+    mkdir -p /tmp/fsp && \
+    wget --progress=bar:force:noscroll https://github.com/renesas/fsp/releases/download/${ENV_FSP_PACK_VERSION}/FSP_Packs_${ENV_FSP_PACK_VERSION}.zip -O /tmp/fsp/FSP_Packs_${ENV_FSP_PACK_VERSION}.zip && \
     unzip -q -d ${TMP_E2STUDIO_SUPPORT_AREA} /tmp/fsp/FSP_Packs_${ENV_FSP_PACK_VERSION}.zip && \
     /usr/bin/e2studio --launcher.suppressErrors -nosplash -application org.eclipse.ease.runScript -data ${ENV_E2STUDIO_DEFAULT_WS} -script /app/scripts/minimum_ease.py || true && \
     rm -rf /tmp/fsp

@@ -89,6 +89,7 @@ bool EiCameraArduCam::initialize_camera(void)
 
         this->actual_resolution = eicamera_resolution_320x240;
         this->cam->set_format(e_format_rgb565);        
+        this->cam->flip(true);
     }
     else {
         // deinit timer ?

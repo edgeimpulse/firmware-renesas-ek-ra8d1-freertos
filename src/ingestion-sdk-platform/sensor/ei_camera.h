@@ -73,6 +73,7 @@ public:
     uint8_t* get_lcd_stream(void) {return stream_buffer;};
 
     bool get_snapshot_and_send(uint16_t width, uint16_t height);
+    bool set_flip(void);
 };
 
 extern bool RBG565ToRGB888(uint8_t *src_buf, uint8_t *dst_buf, uint32_t src_len);

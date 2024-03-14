@@ -46,8 +46,10 @@ extern void graphic_display_draw(void);
 extern void graphic_set_framebuffer(uint8_t* new_fb, uint16_t width, uint16_t height);
 extern void graphic_set_timing(int32_t fsp, int32_t dsp_us, int32_t classification_us);
 extern void graphic_set_box(const char* label, uint16_t x0, uint16_t y0, uint16_t width, uint16_t height, uint16_t idx, float ratio);
+extern void graphic_set_centroid(const char* label, uint16_t x0, uint16_t y0, uint16_t width, uint16_t height, uint16_t idx, float ratio);
 extern void graphic_no_detection(void);
 extern void graphic_start_detection(void);
+extern void graphic_classification(const char* label, float value, uint16_t idx);
 
 extern uint8_t* graphic_get_draw_buffer(void);
 extern void graphic_start_buffer(void);
