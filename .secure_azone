@@ -88,6 +88,7 @@
         <peripheral name="PORT9" group="PORT">
             <slot name="P905" secure="true"/>
             <slot name="P906" secure="true"/>
+            <slot name="P907" secure="true"/>
             <slot name="P908" secure="true"/>
             <slot name="P909" secure="true"/>
         </peripheral>

@@ -77,7 +77,4 @@ RUN rm -rf ${ENV_E2STUDIO_DEFAULT_WS} && \
     mkdir -p ${ENV_E2STUDIO_DEFAULT_WS}/.metadata/.plugins/org.eclipse.core.runtime/.settings/ && \
     /usr/bin/e2studio --launcher.suppressErrors -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild -data ${ENV_E2STUDIO_DEFAULT_WS} -cleanBuild all > /tmp/e2studio.log 2>&1
 
-
-# RUN /usr/bin/e2studio --launcher.suppressErrors -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild -data ${ENV_E2STUDIO_DEFAULT_WS} -import ${ENV_E2STUDIO_DEFAULT_WS}/firmware-renesas-ck-ra6m5 -cleanBuild firmware-renesas-ck-ra6m5 -debug -consolelog
-
 CMD chmod +x ${ENV_E2STUDIO_DEFAULT_WS}/firmware-renesas-ek-ra8d1-freertos/build.sh && ${ENV_E2STUDIO_DEFAULT_WS}/firmware-renesas-ek-ra8d1-freertos/build.sh
